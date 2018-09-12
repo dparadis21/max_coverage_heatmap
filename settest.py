@@ -61,8 +61,8 @@ def plot_heatmap(cover, overlap, covered, n):
 		for x in cover:
 			data[x//n][x%n] = 0.5;
 
-	for x in overlap:
-			data[x//n][x%n] = 0;
+#	for x in overlap:
+#			data[x//n][x%n] = 0;
 
 	ax = sns.heatmap(data, vmin = 0, vmax = 1, linewidths = 1, cbar = False, cmap='brg');
 	plt.show();
