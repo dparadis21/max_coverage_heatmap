@@ -4,7 +4,7 @@ import seaborn as sns; sns.set()
 import matplotlib.pyplot as plt
 import random
 
-def set_cover(universe, subsets, num_subsets):
+def set_cover(universe, subsets, num_subsets, cost, sigval, sigstr, n):
 	"""Find a family of subsets that covers the universal set"""
 	overlap = set();
 	elements = set(e for s in subsets for e in s)
@@ -21,7 +21,11 @@ def set_cover(universe, subsets, num_subsets):
 	for i in range(num_subsets):
 		if covered == elements:
 			break;
-		subset = max(subsets, key=lambda s: len(s - covered));
+		max_importance = calc_importance(subsets, covered.difference(universe),
+									cost, sigval, sigstr, n);
+#		subset = max(subsets, key=lambda s: len(s - covered));
+		subset = subsets[max_importance]
+		subsets.remove(subsets[max_importance]);
 		cover.append(subset);
 		covered |= subset;
 
@@ -32,9 +36,30 @@ def set_cover(universe, subsets, num_subsets):
  		return cover, overlap, 1;
 	else:
 		return universe.difference(covered), overlap, 0;
+
+def calc_importance(subsets, uncovered, cost, sigval, sigstr, n):
+	importance = [0] * n * n;
+	index = 0;
+	max_importance = 0;
+
+	for x in subsets:
+		new_covers = x.intersection(uncovered);
+		if len(new_covers) == 0:
+			index += 1;
+			continue;
+
+		cover_val = int((len(new_covers)/len(uncovered))*100);
+		importance[index] = cover_val + cost[index] + sigval[index] + sigstr[index];
+
+		if importance[index] > max_importance:
+			max_importance = index;
+
+		index += 1;
+
+	return max_importance;
  
-def get_sets_from_file():
-	fp = open(sys.argv[1], "r");
+def get_sets_from_file(filename):
+	fp = open(filename, "r");
 	subsets = [];
 	tmp = [];
 
@@ -45,11 +70,14 @@ def get_sets_from_file():
 		tmp = line.split(', ');
 		s = set();
 
-		for i in range(n*n):
-			if int(tmp[i]):
-				s.add(int(i));
-
+		if filename == "covered.csv" or filename == "sigstr.csv" :
+			for i in range(n*n):
+				if int(tmp[i]):
+					s.add(int(i));
 		subsets.append(s);
+		if filename == "cost.csv" or filename == "sigval.csv":
+			subsets = tmp;
+
 	fp.close();
 
 	return subsets, n;
@@ -84,10 +112,16 @@ def choose_subsets(num_subsets, s, n):
 def main():
 	best_cover = 0;
 	covered = 0;
-	num_subsets = int(sys.argv[2]);
-	s, n = get_sets_from_file();
+	num_subsets = int(sys.argv[1]);
+
+	s, n = get_sets_from_file("covered.csv");
+	sigstr, n = get_sets_from_file("sigstr.csv");
+	sigval, n = get_sets_from_file("sigval.csv");
+	cost, n = get_sets_from_file("cost.csv");
+
 	universe = set(range(0, n*n));
-	cover, overlap, covered = set_cover(universe, s, num_subsets);
+	cover, overlap, covered = set_cover(universe, s, num_subsets, 
+										cost, sigval, sigstr, n);
 
 #	while covered == 0:
 #		subsets = choose_subsets(sys.argv[2], s, n);

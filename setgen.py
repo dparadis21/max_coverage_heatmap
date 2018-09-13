@@ -7,9 +7,9 @@ def main():
 	sig_cutoff = 20; # signal strength
 	covered = None;
 
+	print n;
 	# generates covered/not covered arrays
 	if output_type == 0:
-		print n;
 		for i in range(n*n):
 			signals = random_sig(0, n, sig_cutoff, covered);
 	
