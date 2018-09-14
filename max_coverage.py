@@ -39,7 +39,7 @@ def set_cover(universe, subsets, num_subsets, cost, sigval, sigstr, n):
 	if elements == covered:
  		return cover, overlap, 1, total_cost, total_sigval;
 	else:
-		return universe.difference(covered), overlap, 0, total_cost, total_sigval;
+		return cover, overlap, 0, total_cost, total_sigval;
 
 def calc_importance(subsets, covered, cost, sigval, sigstr, n, total_sigval):
 	importance = 0;
@@ -157,14 +157,14 @@ def main():
 	
 	sets, n = get_sets_from_file("covered.csv");
 
-	for i in range(n*n):
-		for x in range(len(cover)):
-			if sets[i] == cover[x]:
-				for j in range(n*n):
-					if best_signals[j] < int(sigstr[i][j]):
-						best_signals[j] = int(sigstr[i][j]);
 
 	if covered:
+		for i in range(n*n):
+			for x in range(len(cover)):
+				if sets[i] == cover[x]:
+					for j in range(n*n):
+						if best_signals[j] < int(sigstr[i][j]):
+							best_signals[j] = int(sigstr[i][j]);
 		print "Cost";
 		print total_cost;
 		print "Potential Cost";
@@ -188,6 +188,12 @@ def main():
 		for x in cover:
 			print list(x);
 	else:
+		for i in range(n*n):
+			for x in range(len(cover)):
+				if sets[i] == cover[x]:
+					for j in range(n*n):
+						if best_signals[j] < int(sigstr[i][j]):
+							best_signals[j] = int(sigstr[i][j]);
 		print "Cost";
 		print total_cost;
 		print "Potential Cost";
