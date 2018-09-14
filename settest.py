@@ -7,6 +7,7 @@ import random
 def set_cover(universe, subsets, num_subsets, cost, sigval, sigstr, n):
 	"""Find a family of subsets that covers the universal set"""
 	total_cost = 0;
+	total_sigval = 0;
 	overlap = set();
 	elements = set(e for s in subsets for e in s)
 
@@ -22,8 +23,8 @@ def set_cover(universe, subsets, num_subsets, cost, sigval, sigstr, n):
 	for i in range(num_subsets):
 		if covered == elements:
 			break;
-		max_importance = calc_importance(subsets, covered,
-									cost, sigval, sigstr, n);
+		max_importance, total_sigval = calc_importance(subsets, covered,
+									cost, sigval, sigstr, n, total_sigval);
 #		subset = max(subsets, key=lambda s: len(s - covered));
 		subset = subsets[max_importance];
 		total_cost += int(cost[max_importance]);
@@ -39,11 +40,11 @@ def set_cover(universe, subsets, num_subsets, cost, sigval, sigstr, n):
 			overlap = subset.intersection(covered);
 
 	if elements == covered:
- 		return cover, overlap, 1, total_cost;
+ 		return cover, overlap, 1, total_cost, total_sigval;
 	else:
-		return universe.difference(covered), overlap, 0, total_cost;
+		return universe.difference(covered), overlap, 0, total_cost, total_sigval;
 
-def calc_importance(subsets, covered, cost, sigval, sigstr, n):
+def calc_importance(subsets, covered, cost, sigval, sigstr, n, total_sigval):
 	importance = 0;
 	max_importance = 0;
 	importance_index = 0;
@@ -69,10 +70,11 @@ def calc_importance(subsets, covered, cost, sigval, sigstr, n):
 
 		index += 1;
 
-	for x in subsets[max_importance]:
+	for x in subsets[importance_index]:
+		total_sigval += int(sigval[x]);
 		sigval[x] = 0;
 
-	return importance_index;
+	return importance_index, total_sigval;
  
 def get_sets_from_file(filename):
 	fp = open(filename, "r");
@@ -131,7 +133,7 @@ def main():
 	total_value = 0;
 	total_cost = 0;
 	cover_value = 0;
-	possible_value = 0;
+	potential_value = 0;
 	potential_cost = 0;
 	num_subsets = int(sys.argv[1]);
 
@@ -141,11 +143,11 @@ def main():
 	cost, n = get_sets_from_file("cost.csv");
 
 	for i in range(n*n):
-		possible_value += int(sigval[i]);
+		potential_value += int(sigval[i]);
 		potential_cost += int(cost[i]);
 
 	universe = set(range(0, n*n));
-	cover, overlap, covered, total_cost = set_cover(universe, s, num_subsets, 
+	cover, overlap, covered, total_cost, total_value = set_cover(universe, s, num_subsets, 
 										cost, sigval, sigstr, n);
 
 #	while covered == 0:
@@ -157,9 +159,8 @@ def main():
 
 #		if len(cover) > best_cover:
 #			best_cover = len(cover);
-	for x in cover:
-		total_cost
 	cost_efficiency = str(1 - float(total_cost)/float(potential_cost)) + "%";
+	value_efficiency = str(float(total_value)/float(potential_value)) + "%";
 
 	if covered:
 		print "Cost";
@@ -168,6 +169,12 @@ def main():
 		print potential_cost;
 		print "Cost Effeciency";
 		print cost_efficiency;
+		print "Value"
+		print total_value;
+		print "Potential Value"
+		print potential_value;
+		print "Value Efficiency";
+		print value_efficiency;
 		print "Overlap";
 		print list(overlap);
 
@@ -182,7 +189,12 @@ def main():
 		print potential_cost;
 		print "Cost Effeciency";
 		print cost_efficiency;
-#		print "Value Covered";
+		print "Value"
+		print total_value;
+		print "Potential Value"
+		print potential_value;
+		print "Value Efficiency";
+		print value_efficiency;	print "Value Covered";
 #
 #		print str(cover_value);
 #		print "Total possible value";
