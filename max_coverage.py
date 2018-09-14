@@ -179,10 +179,6 @@ def main():
 		print "Value Efficacy";
 		print value_efficacy;
 
-		print "Overlap";
-		print list(overlap);
-
-		print "Covered";
 		print "Number of sets: " + str(len(cover));
 
 		for x in cover:
@@ -207,12 +203,6 @@ def main():
 		print potential_value;
 		print "Value Efficacy";
 		print value_efficacy;
-
-		print "Uncovered";
-		print list(cover);
-
-		print "Overlap";
-		print list(overlap);
 
 	plot_coverage(cover, overlap, covered, best_signals, n);
 
