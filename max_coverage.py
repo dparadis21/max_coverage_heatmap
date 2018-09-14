@@ -5,7 +5,6 @@ import matplotlib.pyplot as plt
 import random
 
 def set_cover(universe, subsets, num_subsets, cost, sigval, sigstr, n):
-	"""Find a family of subsets that covers the universal set"""
 	total_cost = 0;
 	total_sigval = 0;
 	overlap = set();
@@ -25,7 +24,6 @@ def set_cover(universe, subsets, num_subsets, cost, sigval, sigstr, n):
 			break;
 		max_importance, total_sigval = calc_importance(subsets, covered,
 									cost, sigval, sigstr, n, total_sigval);
-#		subset = max(subsets, key=lambda s: len(s - covered));
 		subset = subsets[max_importance];
 		total_cost += int(cost[max_importance]);
 
@@ -54,7 +52,6 @@ def calc_importance(subsets, covered, cost, sigval, sigstr, n, total_sigval):
 	# and return an array of sums
 
 	for x in subsets:
-
 		for z in (x - covered):
 			sigval_val += int(sigval[z]);
 
@@ -112,13 +109,6 @@ def plot_coverage(cover, overlap, covered, best_signals, n):
 	for i in range(n):
 		for j in range(n):
 			data[i][j] = int(best_signals[i*n + j]);
-
-#	if covered == 0:
-#		for x in cover:
-#			data[x//n][x%n] = 0.5;
-
-#	for x in overlap:
-#			data[x//n][x%n] = 0;
 
 	ax = sns.heatmap(data, vmin=0, vmax=n*n, annot=True, linewidths = 1,  cmap='Greens');
 	plt.show();
