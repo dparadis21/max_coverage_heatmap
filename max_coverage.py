@@ -111,7 +111,7 @@ def plot_coverage(cover, overlap, covered, best_signals, n):
 
 	for i in range(n):
 		for j in range(n):
-			data[i][j] = float(float(best_signals[i*n + j])/(n*n*2)) + 0.5
+			data[i][j] = int(best_signals[i*n + j]);
 
 #	if covered == 0:
 #		for x in cover:
@@ -120,7 +120,7 @@ def plot_coverage(cover, overlap, covered, best_signals, n):
 #	for x in overlap:
 #			data[x//n][x%n] = 0;
 
-	ax = sns.heatmap(data, vmin = 0, vmax = 1, linewidths = 1, cbar = False, cmap='brg');
+	ax = sns.heatmap(data, vmin=0, vmax=n*n, annot=True, linewidths = 1, cbar = False, cmap='Greens');
 	plt.show();
 
 def choose_subsets(num_subsets, s, n):
