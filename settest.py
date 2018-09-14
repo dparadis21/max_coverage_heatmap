@@ -79,6 +79,7 @@ def get_sets_from_file(filename):
 	fp = open(filename, "r");
 	subsets = [];
 	tmp = [];
+	sigstr = [];
 
 	n = int(fp.readline());
 
@@ -87,7 +88,10 @@ def get_sets_from_file(filename):
 		tmp = line.split(', ');
 		s = set();
 
-		if filename == "covered.csv" or filename == "sigstr.csv" :
+		if filename == "sigstr.csv":
+			sigstr.append(tmp);
+
+		if filename == "covered.csv":
 			for i in range(n*n):
 				if int(tmp[i]):
 					s.add(int(i));
@@ -97,14 +101,21 @@ def get_sets_from_file(filename):
 
 	fp.close();
 
-	return subsets, n;
+	if filename == "sigstr.csv":
+		return sigstr, n;
+	else:
+		return subsets, n;
 
-def plot_coverage(cover, overlap, covered, n):
+def plot_coverage(cover, overlap, covered, best_signals, n):
 	data = [[1]*n for _ in range(n)];
 
-	if covered == 0:
-		for x in cover:
-			data[x//n][x%n] = 0.5;
+	for i in range(n):
+		for j in range(n):
+			data[i][j] = float(float(best_signals[i*n + j])/(n*n*2)) + 0.5
+
+#	if covered == 0:
+#		for x in cover:
+#			data[x//n][x%n] = 0.5;
 
 #	for x in overlap:
 #			data[x//n][x%n] = 0;
@@ -140,26 +151,24 @@ def main():
 	sigstr, n = get_sets_from_file("sigstr.csv");
 	sigval, n = get_sets_from_file("sigval.csv");
 	cost, n = get_sets_from_file("cost.csv");
+	best_signals = [0] * n * n;
 
 	for i in range(n*n):
 		potential_value += int(sigval[i]);
 		potential_cost += int(cost[i]);
 
 	universe = set(range(0, n*n));
-	cover, overlap, covered, total_cost, total_value = set_cover(universe, s, num_subsets, 
-										cost, sigval, sigstr, n);
+	cover, overlap, covered, total_cost, total_value = set_cover(universe, s, num_subsets												, cost, sigval, sigstr, n);
 
-#	while covered == 0:
-#		subsets = choose_subsets(sys.argv[2], s, n);
-#		cover, overlap, covered = set_cover(universe, subsets);
 	
-#		if covered:
-#			break;
 
-#		if len(cover) > best_cover:
-#			best_cover = len(cover);
 	cost_efficacy = str(float(1 - float(total_cost)/float(potential_cost))*100) + "%";
 	value_efficacy = str(float(float(total_value)/float(potential_value))*100) + "%";
+	
+	for i in range(len(cover)):
+		for j in range(n*n):
+			if best_signals[j] < sigstr[i][j]:
+				best_signals[j] = sigstr[i][j];
 
 	if covered:
 		print "Cost";
@@ -205,6 +214,6 @@ def main():
 		print "Overlap";
 		print list(overlap);
 
-	plot_coverage(cover, overlap, covered, n);
+	plot_coverage(cover, overlap, covered, best_signals, n);
 
 main();
