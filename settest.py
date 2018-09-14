@@ -31,7 +31,6 @@ def set_cover(universe, subsets, num_subsets, cost, sigval, sigstr, n):
 
 		subsets.remove(subsets[max_importance]);
 		cost.remove(cost[max_importance]);
-#		sigval.remove(sigval[max_importance]);
 
 		cover.append(subset);
 		covered |= subset;
@@ -62,7 +61,7 @@ def calc_importance(subsets, covered, cost, sigval, sigstr, n, total_sigval):
 		cover_val = len(x - covered)*n;
 		cost_val = n*n - int(cost[index]);
 
-		importance = cover_val + cost_val + sigval_val;
+		importance = cover_val + cost_val*0 + sigval_val*0;
 
 		if importance > max_importance:
 			max_importance = importance;
@@ -159,27 +158,30 @@ def main():
 
 #		if len(cover) > best_cover:
 #			best_cover = len(cover);
-	cost_efficiency = str(1 - float(total_cost)/float(potential_cost)) + "%";
-	value_efficiency = str(float(total_value)/float(potential_value)) + "%";
+	cost_efficacy = str(float(1 - float(total_cost)/float(potential_cost))*100) + "%";
+	value_efficacy = str(float(float(total_value)/float(potential_value))*100) + "%";
 
 	if covered:
 		print "Cost";
 		print total_cost;
 		print "Potential Cost";
 		print potential_cost;
-		print "Cost Effeciency";
-		print cost_efficiency;
+		print "Cost Efficacy";
+		print cost_efficacy;
+
 		print "Value"
 		print total_value;
 		print "Potential Value"
 		print potential_value;
-		print "Value Efficiency";
-		print value_efficiency;
+		print "Value Efficacy";
+		print value_efficacy;
+
 		print "Overlap";
 		print list(overlap);
 
 		print "Covered";
 		print "Number of sets: " + str(len(cover));
+
 		for x in cover:
 			print list(x);
 	else:
@@ -187,18 +189,16 @@ def main():
 		print total_cost;
 		print "Potential Cost";
 		print potential_cost;
-		print "Cost Effeciency";
-		print cost_efficiency;
+		print "Cost Efficacy";
+		print cost_efficacy;
+
 		print "Value"
 		print total_value;
 		print "Potential Value"
 		print potential_value;
-		print "Value Efficiency";
-		print value_efficiency;	print "Value Covered";
-#
-#		print str(cover_value);
-#		print "Total possible value";
-#		print str(total_value);
+		print "Value Efficacy";
+		print value_efficacy;
+
 		print "Uncovered";
 		print list(cover);
 
