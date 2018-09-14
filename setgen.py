@@ -66,6 +66,8 @@ def random_sig(sig_type, n, sig_cutoff, covered):
 				s[i] = 0;
 		else:
 			if int(covered[i]) == 1:
+				while r == 0:
+					r = random.randint(0, 100);
 				s[i] = r;
 
 	return s;

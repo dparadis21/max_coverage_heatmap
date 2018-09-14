@@ -1,2 +1,2 @@
 #!/bin/bash
-python settest.py $1
+python max_coverage.py $1

@@ -120,7 +120,7 @@ def plot_coverage(cover, overlap, covered, best_signals, n):
 #	for x in overlap:
 #			data[x//n][x%n] = 0;
 
-	ax = sns.heatmap(data, vmin=0, vmax=n*n, annot=True, linewidths = 1, cbar = False, cmap='Greens');
+	ax = sns.heatmap(data, vmin=0, vmax=n*n, annot=True, linewidths = 1,  cmap='Greens');
 	plt.show();
 
 def choose_subsets(num_subsets, s, n):
@@ -165,10 +165,14 @@ def main():
 	cost_efficacy = str(float(1 - float(total_cost)/float(potential_cost))*100) + "%";
 	value_efficacy = str(float(float(total_value)/float(potential_value))*100) + "%";
 	
-	for i in range(len(cover)):
-		for j in range(n*n):
-			if best_signals[j] < sigstr[i][j]:
-				best_signals[j] = sigstr[i][j];
+	sets, n = get_sets_from_file("covered.csv");
+
+	for i in range(n*n):
+		for x in range(len(cover)):
+			if sets[i] == cover[x]:
+				for j in range(n*n):
+					if best_signals[j] < int(sigstr[i][j]):
+						best_signals[j] = int(sigstr[i][j]);
 
 	if covered:
 		print "Cost";
